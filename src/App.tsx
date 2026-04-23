@@ -30,7 +30,6 @@ const InteractiveArt = () => {
   const [message, setMessage] = useState("準備好探索第 6 與 第 7 空間了嗎？");
   const [isAnimating, setIsAnimating] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const [customImage, setCustomImage] = useState<string | null>(null);
   
   const messages = [
     "準備好探索第 6 與 第 7 空間了嗎？"
@@ -43,15 +42,6 @@ const InteractiveArt = () => {
     const nextCount = (clickCount + 1) % 68;
     setClickCount(nextCount);
     
-    // Play sound effect
-    // Use 0423.mp4 for the 67th click, otherwise use 67.m4a
-    const audioPath = nextCount === 67 ? "/0423.mp4" : "/src/67.m4a";
-    const audio = new Audio(audioPath);
-    audio.volume = 1.0;
-    audio.play().catch(e => {
-      console.log("Audio play failed:", e);
-    });
-
     setIsAnimating(true);
     const randomMsg = messages[Math.floor(Math.random() * messages.length)];
     setMessage(randomMsg);
@@ -60,17 +50,6 @@ const InteractiveArt = () => {
     // Use 4000ms if it's the 67th click, otherwise 800ms
     const duration = nextCount === 67 ? 4000 : 800;
     setTimeout(() => setIsAnimating(false), duration);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCustomImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   // Cheat Code Listener
@@ -98,26 +77,10 @@ const InteractiveArt = () => {
     };
   }, []);
 
-  const displayImage = customImage || "./67.jpg";
+  const displayImage = "https://lh3.googleusercontent.com/d/1p8AkLC1TOyicC6rzhL_UwqQXDW2mi8Vo";
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="flex gap-2 mb-2">
-        <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-slate-700 transition-colors flex items-center gap-2">
-          <Code size={12} />
-          {customImage ? "更換圖片" : "上傳自訂圖片"}
-          <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-        </label>
-        {customImage && (
-          <button 
-            onClick={() => setCustomImage(null)}
-            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-red-500/30 transition-colors"
-          >
-            恢復預設
-          </button>
-        )}
-      </div>
-
       {/* Dialogue Bubble */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -178,6 +141,8 @@ const InteractiveArt = () => {
           <img 
             src={displayImage} 
             alt="Hand 6" 
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '50% 50%' }}
           />
@@ -198,6 +163,8 @@ const InteractiveArt = () => {
           <img 
             src={displayImage} 
             alt="Art Face" 
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '0% 50%' }}
           />
@@ -212,6 +179,8 @@ const InteractiveArt = () => {
           <img 
             src={displayImage} 
             alt="Hand 7" 
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '100% 50%' }}
           />
@@ -334,7 +303,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <span className="font-bold text-xl tracking-tight text-blue-600">HUANG.</span>
           <div className="hidden md:flex gap-8">
-            {['Home', 'Experience', 'Skills', 'Projects'].map((item) => (
+            {['Home', 'Game', 'Experience', 'Skills', 'Projects'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -342,7 +311,7 @@ export default function App() {
                   activeSection === item.toLowerCase() ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                {item}
+                {item === 'Game' ? '自製互動遊戲' : item}
               </a>
             ))}
           </div>
@@ -374,11 +343,6 @@ export default function App() {
               <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed mx-auto max-w-4xl">
                 我的興趣是寫書法，平時樂於助人時常幫助年邁的老人和參與各種公益活動，目前就讀高雄科技大學五專部航海科四年級，曾擔任班級幹部-副班長一職，熱衷於幫助班級的大小事和解決同學們的疑難雜症，因而廢寢忘食，而這些習慣將我培養成了一位重視彼此之間互相幫助的個性。
               </p>
-
-              {/* Pixel Character Integration */}
-              <div className="mb-12 max-w-4xl mx-auto">
-                <InteractiveArt />
-              </div>
               
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                 {SOCIAL_LINKS.map((social, idx) => (
@@ -394,6 +358,27 @@ export default function App() {
                 ))}
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Game Section */}
+      <section id="game" className="bg-slate-900 border-y border-slate-800">
+        <div className="section-padding max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-10 justify-center md:justify-start">
+            <div className="p-2 bg-blue-500 rounded-lg text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+              <Sparkles size={24} />
+            </div>
+            <h2 className="text-3xl font-bold text-white">自製互動遊戲</h2>
+          </div>
+
+          <div className="glass-card !bg-white/5 p-8 rounded-[2rem] border-white/5">
+            <div className="mb-8 text-center">
+              <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+                這是一個基於 6 和 7 視覺與觸覺的最高饗宴， 點擊畫面中的任一區塊來觸發動畫，當點擊次數達到 67 次時，將有神秘彩蛋等你解鎖。
+              </p>
+            </div>
+            <InteractiveArt />
           </div>
         </div>
       </section>
