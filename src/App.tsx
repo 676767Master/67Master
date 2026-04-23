@@ -30,6 +30,7 @@ const InteractiveArt = () => {
   const [message, setMessage] = useState("準備好探索第 6 與 第 7 空間了嗎？");
   const [isAnimating, setIsAnimating] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const [customImage, setCustomImage] = useState<string | null>(null);
   
   const messages = [
     "準備好探索第 6 與 第 7 空間了嗎？"
@@ -43,10 +44,9 @@ const InteractiveArt = () => {
     setClickCount(nextCount);
     
     // Play sound effect
-    // Use video0423 for the 67th click, otherwise use audio67
-    const base = import.meta.env.BASE_URL;
-    const audioSource = nextCount === 67 ? `${base}0423.mp4` : `${base}67.m4a`;
-    const audio = new Audio(audioSource);
+    // Use 0423.mp4 for the 67th click, otherwise use 67.m4a
+    const audioPath = nextCount === 67 ? "/0423.mp4" : "/src/67.m4a";
+    const audio = new Audio(audioPath);
     audio.volume = 1.0;
     audio.play().catch(e => {
       console.log("Audio play failed:", e);
@@ -60,6 +60,17 @@ const InteractiveArt = () => {
     // Use 4000ms if it's the 67th click, otherwise 800ms
     const duration = nextCount === 67 ? 4000 : 800;
     setTimeout(() => setIsAnimating(false), duration);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Cheat Code Listener
@@ -87,8 +98,26 @@ const InteractiveArt = () => {
     };
   }, []);
 
+  const displayImage = customImage || "./67.jpg";
+
   return (
     <div className="flex flex-col items-center gap-6">
+      <div className="flex gap-2 mb-2">
+        <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-slate-700 transition-colors flex items-center gap-2">
+          <Code size={12} />
+          {customImage ? "更換圖片" : "上傳自訂圖片"}
+          <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+        </label>
+        {customImage && (
+          <button 
+            onClick={() => setCustomImage(null)}
+            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-red-500/30 transition-colors"
+          >
+            恢復預設
+          </button>
+        )}
+      </div>
+
       {/* Dialogue Bubble */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -147,7 +176,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden"
         >
           <img 
-            src={`${import.meta.env.BASE_URL}67.jpg`} 
+            src={displayImage} 
             alt="Hand 6" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '50% 50%' }}
@@ -167,7 +196,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden outline-none relative"
         >
           <img 
-            src={`${import.meta.env.BASE_URL}67.jpg`} 
+            src={displayImage} 
             alt="Art Face" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '0% 50%' }}
@@ -181,7 +210,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden"
         >
           <img 
-            src={`${import.meta.env.BASE_URL}67.jpg`} 
+            src={displayImage} 
             alt="Hand 7" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '100% 50%' }}
