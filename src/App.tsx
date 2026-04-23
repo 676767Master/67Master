@@ -26,6 +26,11 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+// Import assets for deployment compatibility
+import img67 from './assets/67.jpg';
+import audio67 from './assets/67.m4a';
+import video0423 from './assets/0423.mp4';
+
 const InteractiveArt = () => {
   const [message, setMessage] = useState("準備好探索第 6 與 第 7 空間了嗎？");
   const [isAnimating, setIsAnimating] = useState(false);
@@ -43,9 +48,9 @@ const InteractiveArt = () => {
     setClickCount(nextCount);
     
     // Play sound effect
-    // Use 0423.mp4 for the 67th click, otherwise use 67.m4a
-    const audioPath = nextCount === 67 ? "/0423.mp4" : "/src/67.m4a";
-    const audio = new Audio(audioPath);
+    // Use video0423 for the 67th click, otherwise use audio67
+    const audioSource = nextCount === 67 ? video0423 : audio67;
+    const audio = new Audio(audioSource);
     audio.volume = 1.0;
     audio.play().catch(e => {
       console.log("Audio play failed:", e);
@@ -146,7 +151,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden"
         >
           <img 
-            src="./67.jpg" 
+            src={img67} 
             alt="Hand 6" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '50% 50%' }}
@@ -166,7 +171,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden outline-none relative"
         >
           <img 
-            src="./67.jpg" 
+            src={img67} 
             alt="Art Face" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '0% 50%' }}
@@ -180,7 +185,7 @@ const InteractiveArt = () => {
           className="w-1/3 h-full overflow-hidden"
         >
           <img 
-            src="./67.jpg" 
+            src={img67} 
             alt="Hand 7" 
             className="w-[300%] h-full object-cover brightness-75 group-hover:brightness-100 transition-all duration-700" 
             style={{ objectPosition: '100% 50%' }}
