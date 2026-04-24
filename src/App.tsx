@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Github, 
   Linkedin, 
@@ -30,14 +30,60 @@ const InteractiveArt = () => {
   const [message, setMessage] = useState("準備好探索第 6 與 第 7 空間了嗎？");
   const [isAnimating, setIsAnimating] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const [customImage, setCustomImage] = useState<string | null>(null);
   
+  // Preload audio
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    // Using GitHub asset link which is more reliable for direct audio playback
+    const audioUrl = "https://github.com/user-attachments/assets/78c98214-6aef-447d-a71e-0b528f4aff42";
+    audioRef.current = new Audio(audioUrl);
+    audioRef.current.load();
+  }, []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const messages = [
     "準備好探索第 6 與 第 7 空間了嗎？"
   ];
 
+  const [cycleClicks, setCycleClicks] = useState(0);
+  const [lastCycleClick, setLastCycleClick] = useState(0);
+
+  const handleCycleClick = () => {
+    const now = Date.now();
+    if (now - lastCycleClick < 500) {
+      const newClicks = cycleClicks + 1;
+      if (newClicks >= 3) {
+        setClickCount(66);
+        setCycleClicks(0);
+      } else {
+        setCycleClicks(newClicks);
+      }
+    } else {
+      setCycleClicks(1);
+    }
+    setLastCycleClick(now);
+  };
+
   const handleInteraction = () => {
     if (isAnimating) return;
     
+    // Play preloaded sound effect
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // Reset to start if already playing
+      audioRef.current.play().catch(e => console.error("音訊播放失敗:", e));
+    }
+
     // We check if the NEXT count will be 67 or if the current count is 67
     const nextCount = (clickCount + 1) % 68;
     setClickCount(nextCount);
@@ -77,10 +123,26 @@ const InteractiveArt = () => {
     };
   }, []);
 
-  const displayImage = "https://lh3.googleusercontent.com/d/1p8AkLC1TOyicC6rzhL_UwqQXDW2mi8Vo";
+  const displayImage = customImage || "https://lh3.googleusercontent.com/d/1p8AkLC1TOyicC6rzhL_UwqQXDW2mi8Vo";
 
   return (
     <div className="flex flex-col items-center gap-6">
+      <div className="flex gap-2 mb-2 flex-wrap justify-center">
+        <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-slate-700 transition-colors flex items-center gap-2">
+          <Code size={12} />
+          {customImage ? "更換圖片" : "自訂背景圖"}
+          <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+        </label>
+        {customImage && (
+          <button 
+            onClick={() => setCustomImage(null)}
+            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-red-500/30 transition-colors"
+          >
+            恢復預設
+          </button>
+        )}
+      </div>
+
       {/* Dialogue Bubble */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -203,7 +265,10 @@ const InteractiveArt = () => {
         </div>
         
         {/* Click Counter Area */}
-        <div className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+        <div 
+          onClick={handleCycleClick}
+          className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)] cursor-pointer hover:bg-blue-500/20 transition-colors active:scale-95"
+        >
           <span className="text-[10px] font-black uppercase tracking-tighter text-blue-400">Cycle</span>
           <motion.span 
             key={clickCount}
