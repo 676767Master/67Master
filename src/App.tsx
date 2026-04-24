@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Github, 
   Linkedin, 
@@ -31,39 +31,19 @@ const InteractiveArt = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [customImage, setCustomImage] = useState<string | null>(null);
-  const [specialAudioUrl, setSpecialAudioUrl] = useState<string | null>(null);
   
   // Preload audio
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const specialAudioRef = useRef<HTMLAudioElement | null>(null);
-
+  const clickAudioRef = useRef<HTMLAudioElement | null>(null);
+  const successAudioRef = useRef<HTMLAudioElement | null>(null);
+  
   useEffect(() => {
-    // Normal interaction sound
-    audioRef.current = new Audio("https://github.com/user-attachments/assets/78c98214-6aef-447d-a71e-0b528f4aff42");
-    audioRef.current.load();
+    // Ordinary click sound
+    clickAudioRef.current = new Audio("https://github.com/user-attachments/assets/3c1b73a4-a08c-484b-88b3-dab6f5a917b3");
+    clickAudioRef.current.load();
 
-    // Fetch special audio URL from .gitignore as requested
-    // Note: In some environments, root files like .gitignore might not be served.
-    // If it fails, we use a fallback or the code simply uses the default sound.
-    fetch('/.gitignore')
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.split('\n');
-        const urlLine = lines.find(line => line.includes('https://github.com/user-attachments/assets/3c1b73a4-a08c-484b-88b3-dab6f5a917b3'));
-        if (urlLine) {
-          const url = urlLine.trim();
-          setSpecialAudioUrl(url);
-          specialAudioRef.current = new Audio(url);
-          specialAudioRef.current.load();
-        }
-      })
-      .catch(err => {
-        console.error("Failed to read .gitignore for audio URL:", err);
-        // Fallback to direct URL if fetch fails (e.g. root files not served)
-        const fallbackUrl = "https://github.com/user-attachments/assets/3c1b73a4-a08c-484b-88b3-dab6f5a917b3";
-        specialAudioRef.current = new Audio(fallbackUrl);
-        specialAudioRef.current.load();
-      });
+    // Success sound for 67th click
+    successAudioRef.current = new Audio("https://github.com/user-attachments/assets/78c98214-6aef-447d-a71e-0b528f4aff42");
+    successAudioRef.current.load();
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,19 +83,21 @@ const InteractiveArt = () => {
   const handleInteraction = () => {
     if (isAnimating) return;
     
-    // We check if the NEXT count will be 67 or if the current count is 67
     const nextCount = (clickCount + 1) % 68;
-
-    // Play sound effect
-    if (nextCount === 67 && specialAudioRef.current) {
-      specialAudioRef.current.currentTime = 0;
-      specialAudioRef.current.play().catch(e => console.error("特殊音訊播放失敗:", e));
-    } else if (audioRef.current) {
-      audioRef.current.currentTime = 0; 
-      audioRef.current.play().catch(e => console.error("音訊播放失敗:", e));
-    }
-
     setClickCount(nextCount);
+
+    // Play appropriate sound effect
+    if (nextCount === 67) {
+      if (successAudioRef.current) {
+        successAudioRef.current.currentTime = 0;
+        successAudioRef.current.play().catch(e => console.error("成功音訊播放失敗:", e));
+      }
+    } else {
+      if (clickAudioRef.current) {
+        clickAudioRef.current.currentTime = 0;
+        clickAudioRef.current.play().catch(e => console.error("點擊音訊播放失敗:", e));
+      }
+    }
     
     setIsAnimating(true);
     const randomMsg = messages[Math.floor(Math.random() * messages.length)];
