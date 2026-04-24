@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Github, 
   Linkedin, 
@@ -30,33 +30,7 @@ const InteractiveArt = () => {
   const [message, setMessage] = useState("準備好探索第 6 與 第 7 空間了嗎？");
   const [isAnimating, setIsAnimating] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const [customImage, setCustomImage] = useState<string | null>(null);
   
-  // Preload audio
-  const clickAudioRef = useRef<HTMLAudioElement | null>(null);
-  const successAudioRef = useRef<HTMLAudioElement | null>(null);
-  
-  useEffect(() => {
-    // Ordinary click sound
-    clickAudioRef.current = new Audio("https://github.com/user-attachments/assets/3c1b73a4-a08c-484b-88b3-dab6f5a917b3");
-    clickAudioRef.current.load();
-
-    // Success sound for 67th click
-    successAudioRef.current = new Audio("https://github.com/user-attachments/assets/78c98214-6aef-447d-a71e-0b528f4aff42");
-    successAudioRef.current.load();
-  }, []);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCustomImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const messages = [
     "準備好探索第 6 與 第 7 空間了嗎？"
   ];
@@ -86,19 +60,6 @@ const InteractiveArt = () => {
     const nextCount = (clickCount + 1) % 68;
     setClickCount(nextCount);
 
-    // Play appropriate sound effect
-    if (nextCount === 67) {
-      if (successAudioRef.current) {
-        successAudioRef.current.currentTime = 0;
-        successAudioRef.current.play().catch(e => console.error("成功音訊播放失敗:", e));
-      }
-    } else {
-      if (clickAudioRef.current) {
-        clickAudioRef.current.currentTime = 0;
-        clickAudioRef.current.play().catch(e => console.error("點擊音訊播放失敗:", e));
-      }
-    }
-    
     setIsAnimating(true);
     const randomMsg = messages[Math.floor(Math.random() * messages.length)];
     setMessage(randomMsg);
@@ -134,26 +95,10 @@ const InteractiveArt = () => {
     };
   }, []);
 
-  const displayImage = customImage || "https://lh3.googleusercontent.com/d/1p8AkLC1TOyicC6rzhL_UwqQXDW2mi8Vo";
+  const displayImage = "https://lh3.googleusercontent.com/d/1p8AkLC1TOyicC6rzhL_UwqQXDW2mi8Vo";
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="flex gap-2 mb-2 flex-wrap justify-center">
-        <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-slate-700 transition-colors flex items-center gap-2">
-          <Code size={12} />
-          {customImage ? "更換圖片" : "自訂背景圖"}
-          <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-        </label>
-        {customImage && (
-          <button 
-            onClick={() => setCustomImage(null)}
-            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full border border-red-500/30 transition-colors"
-          >
-            恢復預設
-          </button>
-        )}
-      </div>
-
       {/* Dialogue Bubble */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -601,6 +546,25 @@ export default function App() {
                   <div className="p-4">
                     <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">3D Model - Character Study</h4>
                     <p className="text-xs text-slate-500">在 Tripo3D 平台查看我的作品</p>
+                  </div>
+                </a>
+
+                {/* New Project: 旅遊行程VLOG */}
+                <a 
+                  href="https://youtu.be/Op-UqZSHoJA" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="glass-card rounded-2xl overflow-hidden group cursor-pointer block border border-slate-200 hover:border-blue-400 transition-colors"
+                >
+                  <div className="aspect-video bg-slate-200 relative">
+                    <img src="https://i.ytimg.com/vi/Op-UqZSHoJA/maxresdefault.jpg" alt="旅遊行程VLOG" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-red-600/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-white font-bold flex items-center gap-2">前往觀看影片 <ExternalLink size={16} /></span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">旅遊行程VLOG</h4>
+                    <p className="text-xs text-slate-500">視覺與藝術的沈浸式體驗</p>
                   </div>
                 </a>
               </div>
