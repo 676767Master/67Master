@@ -22,7 +22,9 @@ import {
   MessageSquare,
   Smile,
   MousePointer2,
-  Sparkles
+  Sparkles,
+  FileText,
+  Monitor
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -301,7 +303,7 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'experience', 'skills', 'projects'];
+      const sections = ['home', 'game', 'experience', 'skills', 'art', 'projects'];
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
@@ -324,7 +326,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <span className="font-bold text-xl tracking-tight text-blue-600">HUANG.</span>
           <div className="hidden md:flex gap-8">
-            {['Home', 'Game', 'Experience', 'Skills', 'Projects'].map((item) => (
+            {['Home', 'Game', 'Experience', 'Skills', 'Art', 'Projects'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -332,7 +334,7 @@ export default function App() {
                   activeSection === item.toLowerCase() ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                {item === 'Game' ? '自製互動遊戲' : item}
+                {item === 'Game' ? '互動遊戲' : item === 'Art' ? '3D 專欄' : item === 'Skills' ? '個人背景' : item === 'Experience' ? '經歷' : item === 'Projects' ? '旅遊 VLOG' : item}
               </a>
             ))}
           </div>
@@ -353,9 +355,24 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-4">
-                黃翰均 <span className="text-blue-600">Huang</span>
-              </h1>
+              <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                  className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl ring-4 ring-blue-500/20"
+                >
+                  <img 
+                    src="https://lh3.googleusercontent.com/d/1AQCNBsgR3tx39JPwCJ_-xfBo5YQ0h0SX" 
+                    alt="Profile" 
+                    className="w-full h-full object-cover scale-[2.2]"
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
+                <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight">
+                  黃翰均 <span className="text-blue-600">Huang</span>
+                </h1>
+              </div>
               <div className="flex flex-wrap justify-center gap-6 mb-8 text-slate-500 font-medium">
                 <span className="flex items-center gap-2"><Calendar size={18} /> 2006-09-26</span>
                 <span className="flex items-center gap-2">天秤座 O型</span>
@@ -396,7 +413,8 @@ export default function App() {
           <div className="glass-card !bg-white/5 p-8 rounded-[2rem] border-white/5">
             <div className="mb-8 text-center">
               <p className="text-slate-400 text-sm max-w-2xl mx-auto">
-                這是一個基於 6 和 7 視覺與觸覺的最高饗宴， 點擊畫面中的任一區塊來觸發動畫，當點擊次數達到 67 次時，將有神秘彩蛋等你解鎖。
+                這是一個基於 6 和 7 視覺與觸覺的最高饗宴， 點擊畫面中的任一區塊來觸發動畫，
+                當點擊次數達到 67 次時，將有神秘彩蛋等你解鎖。
               </p>
             </div>
             <InteractiveArt />
@@ -512,63 +530,65 @@ export default function App() {
                 </div>
                 <h2 className="text-3xl font-bold text-slate-900">學歷背景</h2>
               </div>
-              <div className="pl-6 border-l-2 border-slate-200">
+              <div className="pl-6 border-l-2 border-slate-200 space-y-8">
                 <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-blue-600 border-4 border-white shadow-sm"></div>
-                  <span className="text-xs font-bold text-blue-600 uppercase mb-1 block">2020/09 - 2023/06</span>
+                  <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-300 border-4 border-white shadow-sm"></div>
+                  <span className="text-xs font-bold text-slate-400 uppercase mb-1 block">2020/09 - 2023/06</span>
                   <h3 className="text-xl font-bold text-slate-900 leading-tight">崇德國中</h3>
                   <p className="text-slate-600 font-medium">物理資優班</p>
                 </div>
-              </div>
-            </div>
-
-            {/* Assignments Showcase */}
-            <div>
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-purple-600 rounded-lg text-white">
-                  <ExternalLink size={24} />
+                <div className="relative">
+                  <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-blue-600 border-4 border-white shadow-sm"></div>
+                  <span className="text-xs font-bold text-blue-600 uppercase mb-1 block">2023/09 - 現在</span>
+                  <h3 className="text-xl font-bold text-slate-900 leading-tight">國立高雄科技大學</h3>
+                  <p className="text-slate-600 font-medium">航海科</p>
                 </div>
-                <h2 className="text-3xl font-bold text-slate-900">精選作品</h2>
-              </div>
-              <div className="grid gap-4">
-                <a 
-                  href="https://studio.tripo3d.ai/3d-model/f632ef4a-0b60-460e-8904-c468b9535857?invite_code=53EL2U" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="glass-card rounded-2xl overflow-hidden group cursor-pointer block border border-slate-200 hover:border-blue-400 transition-colors"
-                >
-                  <div className="aspect-video bg-slate-200 relative">
-                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=800" alt="3D Model Project" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-blue-600/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-white font-bold flex items-center gap-2">查看 3D 模型 <ExternalLink size={16} /></span>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">3D Model - Character Study</h4>
-                    <p className="text-xs text-slate-500">在 Tripo3D 平台查看我的作品</p>
-                  </div>
-                </a>
-
-                {/* New Project: 旅遊行程VLOG */}
-                <a 
-                  href="https://youtu.be/Op-UqZSHoJA" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="glass-card rounded-2xl overflow-hidden group cursor-pointer block border border-slate-200 hover:border-blue-400 transition-colors"
-                >
-                  <div className="aspect-video bg-slate-200 relative">
-                    <img src="https://i.ytimg.com/vi/Op-UqZSHoJA/maxresdefault.jpg" alt="旅遊行程VLOG" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-red-600/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-white font-bold flex items-center gap-2">前往觀看影片 <ExternalLink size={16} /></span>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">旅遊行程VLOG</h4>
-                    <p className="text-xs text-slate-500">視覺與藝術的沈浸式體驗</p>
-                  </div>
-                </a>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* 3D Art Specialist Section */}
+      <section id="art" className="bg-white border-y border-slate-200">
+        <div className="section-padding">
+          <div className="flex items-center gap-3 mb-10 justify-center">
+            <div className="p-2 bg-blue-600 rounded-lg text-white shadow-lg">
+              <Sparkles size={24} />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">3D 藝術製作專欄</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <a 
+              href="https://studio.tripo3d.ai/3d-model/f632ef4a-0b60-460e-8904-c468b9535857?invite_code=53EL2U" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-blue-600 rounded-[2.5rem] overflow-hidden group cursor-pointer block border border-blue-700 hover:bg-blue-700 transition-all hover:shadow-2xl text-white"
+            >
+              <div className="p-8">
+                <h4 className="text-xl font-bold group-hover:text-blue-100 transition-colors">3D Model - Character Study</h4>
+                <p className="text-sm text-blue-100 mt-2">在 Tripo3D 平台查看我的作品</p>
+                <div className="mt-4 font-bold flex items-center gap-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  查看詳情 <ExternalLink size={14} />
+                </div>
+              </div>
+            </a>
+
+            <a 
+              href="https://drive.google.com/file/d/1gL-FNROpL9BXw0TI1YR4M_axLee2eFJ_/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-600 rounded-[2.5rem] overflow-hidden group cursor-pointer block border border-blue-700 hover:bg-blue-700 transition-all hover:shadow-2xl text-white"
+            >
+              <div className="p-8">
+                <h4 className="text-xl font-bold group-hover:text-blue-100 transition-colors">作品對比圖</h4>
+                <p className="text-sm text-blue-100 mt-2">點擊檢視高畫質成果細節</p>
+                <div className="mt-4 font-bold flex items-center gap-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  (對比圖) <ExternalLink size={14} />
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>
@@ -624,9 +644,83 @@ export default function App() {
 
           <div className="flex flex-wrap gap-8 items-center justify-center p-8 bg-slate-800/30 rounded-3xl border border-slate-700/30">
             <span className="text-slate-500 font-bold text-xs uppercase tracking-widest">米其林饗宴安排</span>
-            {TRAVEL_PLAN.restaurants.map(res => (
-              <span key={res} className="text-xl font-serif italic text-blue-200">{res}</span>
-            ))}
+          </div>
+
+          <div className="mt-20">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2 bg-blue-600 rounded-lg text-white">
+                <ExternalLink size={24} />
+              </div>
+              <h2 className="text-3xl font-bold text-white">精選 VLOG</h2>
+            </div>
+            
+            <div className="max-w-4xl">
+              {/* VLOG Featured Column */}
+              <div className="flex flex-col gap-4">
+                <div className="text-sm font-black text-blue-500 uppercase tracking-widest mb-1 italic">VIDEO PRODUCTION</div>
+                <a 
+                  href="https://youtu.be/Op-UqZSHoJA" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-slate-800/50 rounded-3xl overflow-hidden group cursor-pointer block border border-slate-700/50 hover:border-blue-400 transition-all hover:shadow-2xl"
+                >
+                  <div className="p-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="bg-blue-500/10 p-2 rounded-lg">
+                        <Plane size={24} className="text-blue-500" />
+                      </div>
+                      <h4 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">旅遊行程 VLOG</h4>
+                    </div>
+
+                    <div className="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                      前往觀看影片 <ExternalLink size={20} />
+                    </div>
+                  </div>
+                </a>
+
+                {/* Added Planning Document Link */}
+                <a 
+                  href="https://docs.google.com/document/d/1bxpYTFsSMtGIiBEcfQEwfHqKOmsrh-sw9t3fH2_X-IM/edit?tab=t.0" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-slate-800/10 rounded-3xl overflow-hidden group cursor-pointer block border border-slate-700/30 hover:border-blue-400 transition-all hover:bg-slate-800/40"
+                >
+                  <div className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-blue-500/10 p-2 rounded-lg">
+                        <FileText size={20} className="text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">專題製作企畫書</h4>
+                        <p className="text-xs text-slate-500">詳細紀錄專案背景、流程與預期目標</p>
+                      </div>
+                      <ExternalLink size={16} className="ml-auto text-slate-600 group-hover:text-blue-400 transition-colors" />
+                    </div>
+                  </div>
+                </a>
+
+                {/* Added Presentation Link */}
+                <a 
+                  href="https://docs.google.com/presentation/d/1E8dLzuik_Reyl8M8oh5G8NzZAio9iPiLHm5-OXWbkhM/edit?usp=sharing" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-slate-800/10 rounded-3xl overflow-hidden group cursor-pointer block border border-slate-700/30 hover:border-blue-400 transition-all hover:bg-slate-800/40"
+                >
+                  <div className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-blue-500/10 p-2 rounded-lg">
+                        <Monitor size={20} className="text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">旅遊PPT</h4>
+                        <p className="text-xs text-slate-500">專案簡報與視覺呈現彙整</p>
+                      </div>
+                      <ExternalLink size={16} className="ml-auto text-slate-600 group-hover:text-blue-400 transition-colors" />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
